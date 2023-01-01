@@ -6,4 +6,4 @@ frag_calc [completed]
 > for planning your daily fragment searches
 
 min_alg [WIP]
-> to calculate the minimum number of algos needed (assuming you share algos between dolls that are not deployed at the same time)
+> for calculating the minimum number of algos needed (assuming you share algos between dolls that are not deployed at the same time)
