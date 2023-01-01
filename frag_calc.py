@@ -141,9 +141,37 @@ class PNC_acc:
                 self.Ch6 = self.Ch6.append(line2, ignore_index=False)
                 self.Ch6.index = self.Ch6.index.map(str)
                 self.Ch6 = self.Ch6.sort_index().reset_index(drop=True)
-                
+
+    def sort(self,column_name,ascend):
+        if ascend == 1:
+            self.df = self.df.sort_values(by=['{}'.format(column_name)],ascending=True)
+        if ascend == 0:
+            self.df = self.df.sort_values(by=['{}'.format(column_name)],ascending=False)
+    
+    def save_df(self,file_name):
+        self.df.to_csv(file_name, index=False)
+
+    def save_timeline(self,file_name):
+        cum_day = np.array([date.today()])
+        for i in self.Ch4.iloc[1:,1:].values:
+            cum_day = np.append(cum_day, cum_day[-1] + timedelta(days=float(i)))
+        cum_day = np.append(cum_day,[date.today()])
+        for j in self.Ch6.iloc[1:,1:].values:
+            cum_day = np.append(cum_day, cum_day[-1] + timedelta(days=float(j)))        
+        namelist = pd.concat([self.Ch4.iloc[:,0], self.Ch6.iloc[:,0]])
+        timeline = pd.DataFrame({"name": namelist, "date": cum_day}) 
+        timeline.to_csv(file_name,index=False)
+
 #%% USER GUIDE
-# Add dolls
+#Load existing timeline        
+def load_df(file_name):
+    names = np.loadtxt(file_name,dtype=str,delimiter=",",skiprows=1,usecols=0)
+    fragments = np.loadtxt(file_name,dtype=str,delimiter=",",skiprows=1,usecols=1)
+    current_rarities = np.loadtxt(file_name,dtype=str,delimiter=",",skiprows=1,usecols=2)
+    return PNC_acc(names, fragments, current_rarities)
+    
+EN = load_df("EN_df_Jan01")
+#%% Otherwise, start here to add your own dolls
 EN = PNC_acc(["Chanzhi", "Dushy", "Hatsu"],[36,24,58],[4.5,2.5,3])
 EN.df
 ''' Output
@@ -152,8 +180,9 @@ EN.df
 1    Dushy         24             2.5
 2    Hatsu         58             3.0
 '''
-#%%
-# Add more dolls
+#%% Save data as csv
+EN.save_df("EN_df_Jan01")
+#%% Add more dolls
 EN.add_doll("Nanaka",2,3)
 EN.add_doll("Sueyoi",0,3)
 EN.add_doll("Imhotep",13,2)
@@ -169,15 +198,13 @@ EN.df
 5  Imhotep         13             2.0
 6      Lam         20             4.0
 '''
-#%%
-# Queue up dolls
+#%% Queue up dolls
 EN.search("Dushy",3.5,4)
 EN.search("Hatsu",5,6)
 EN.search("Lam",4.5,4)
 EN.search("Imhotep",5,4)
 EN.search("Nanaka",4.5,6)
-#%%
-# View days required to reach goal
+#%% View days required to reach goal
 EN.Ch4 # The 4-per-day queue
 '''
       name       days
@@ -193,8 +220,7 @@ EN.Ch6 # The 6-per-day queue
 1   Hatsu  36.388889
 2  Nanaka  30.277778
 '''
-#%%
-# Translate days to dates
+#%% Translate days to dates
 EN.timeline(4)
 
 '''
@@ -204,6 +230,8 @@ EN.timeline(4)
 2      Lam  2023-01-29
 3  Imhotep  2023-04-16
 '''
+#%% Save timeline as csv
+EN.save_timeline("EN_timeline_Jan01")
 #%%
 # Moving dolls around
 EN.move("Dushy",4,4,2.5)
@@ -215,8 +243,7 @@ EN.timeline(4)
 2    Dushy  2023-01-29
 3  Imhotep  2023-04-16
 '''
-#%%
-# More frags per day
+#%% Change number of searches per day
 EN.move("Dushy",4,6,0.5)
 EN.timeline(6)
 '''
@@ -226,8 +253,7 @@ EN.timeline(6)
 2   Hatsu  2023-02-20
 3  Nanaka  2023-03-22
 '''
-#%%
-# Remove dolls from the queue
+#%% Remove dolls from the queue
 EN.remove("Dushy",6)
 EN.timeline(6)
 '''
@@ -236,3 +262,6 @@ EN.timeline(6)
 1   Hatsu  2023-02-05
 2  Nanaka  2023-03-07
 '''
+
+#%% Sort by columns
+EN.sort("Current_Rarity",0) # Descending rarity
