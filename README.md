@@ -2,9 +2,11 @@
 
 A collection of useful tools I am developing in the spirit of Spreadsheets Frontline.
 
-frag_calc [completed]
+frag_calc.p [completed]
 > for planning your daily fragment searches
 
-min_alg [WIP]
-> for calculating the minimum number of algos needed (assuming you share algos between dolls that are not deployed at the same time)
-> working on easier access to editing doll_database and teams
+run.py [WIP]
+Minimum numer of algos!
+> Can calculate according to mainstats or substats
+> Assumes you only deploy 5 dolls at the same time
+> Working on easier access to editing doll_database and teams
