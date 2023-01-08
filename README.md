@@ -7,3 +7,4 @@ frag_calc [completed]
 
 min_alg [WIP]
 > for calculating the minimum number of algos needed (assuming you share algos between dolls that are not deployed at the same time)
+> working on easier access to editing doll_database and teams
